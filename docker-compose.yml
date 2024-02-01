@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  app:
+    restart: on-failure
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+
+  # ngrok:
+  #   image: ngrok/ngrok:alpine
+  #   depends_on:
+  #     - nginx
+  #   environment:
+  #     - NGROK_AUTHTOKEN=2bOtB3yTkBO03l6hJ0dzcHA9gYU_2MhZP9J1VRuod5xNEePDJ
+  #   command: ngrok http nginx:80

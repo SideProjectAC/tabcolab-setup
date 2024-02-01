@@ -1,0 +1,29 @@
+name: SSH INTO VM
+
+on:
+  push:
+    branches: [test]
+  pull_request:
+    branches: [test]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run remote command
+        uses: appleboy/ssh-action@master
+        with:
+          host: 192.168.65.3
+          port: 22
+          username: nivekyang
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            if [ ! -d "node-github-action" ]; then
+              git clone https://github.com/nivek-yang/node-github-action.git
+              cd node-github-action
+            else
+              cd node-github-action
+              git pull
+            fi
+            docker-compose up -d

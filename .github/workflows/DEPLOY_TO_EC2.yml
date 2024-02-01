@@ -1,0 +1,30 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [test]
+
+jobs:
+  Deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Connect to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }} # Add public key to EC2 instance before running this action
+          script: |
+            if [ ! -d "node-github-action" ]; then
+              git clone https://github.com/nivek-yang/node-github-action.git
+              cd node-github-action
+            else
+              cd node-github-action
+              git pull
+            fi
+            docker-compose up -d
