@@ -18,7 +18,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }} # Add public key to EC2 instance before running this action
+          key: ${{ secrets.EC2_SSH_KEY }} # Add public key to EC2 instance before running the action
           script: |
             if [ ! -d "node-swagger" ]; then
               git clone https://github.com/nivek-yang/node-swagger.git
