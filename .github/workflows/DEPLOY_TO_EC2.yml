@@ -2,7 +2,7 @@ name: Deploy to EC2
 
 on:
   push:
-    branches: [test]
+    branches: [master]
 
 jobs:
   Deploy:
@@ -20,11 +20,11 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }} # Add public key to EC2 instance before running this action
           script: |
-            if [ ! -d "node-github-action" ]; then
-              git clone https://github.com/nivek-yang/node-github-action.git
-              cd node-github-action
+            if [ ! -d "node-swagger" ]; then
+              git clone https://github.com/nivek-yang/node-swagger.git
+              cd node-swagger
             else
-              cd node-github-action
+              cd node-swagger
               git pull
             fi
             docker-compose up -d
