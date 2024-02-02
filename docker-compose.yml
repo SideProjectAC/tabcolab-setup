@@ -16,7 +16,18 @@ services:
       - "80:80"
     depends_on:
       - app
+      - swagger
 
+  swagger:
+    build:
+      context: ./swagger
+      dockerfile: Dockerfile
+    volumes:
+      - ./app/routes:/app/routes
+      - ./app/controllers:/app/controllers
+    command: npm run swagger
+    ports:
+      - "5000:5000"
   # ngrok:
   #   image: ngrok/ngrok:alpine
   #   depends_on:
