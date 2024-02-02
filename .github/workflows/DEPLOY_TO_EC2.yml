@@ -28,3 +28,6 @@ jobs:
               git pull
             fi
             docker-compose up -d
+            sleep 3600 # Wait for 1 hour
+            docker-compose down
+            docker rmi $(docker images -q)
