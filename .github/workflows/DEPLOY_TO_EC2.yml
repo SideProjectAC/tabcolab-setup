@@ -21,10 +21,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }} # Add public key to EC2 instance before running the action
           script: |
             if [ ! -d "node-swagger" ]; then
-              git clone https://github.com/nivek-yang/node-swagger.git
+              git clone -b mock-server https://github.com/nivek-yang/node-swagger.git
               cd node-swagger
             else
               cd node-swagger
-              git pull
+              git pull origin mock-server
             fi
             docker-compose up -d
