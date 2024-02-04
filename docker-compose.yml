@@ -34,7 +34,6 @@ services:
     build:
       context: ./mock-server
       dockerfile: Dockerfile
-    command: npm run mock-server
     ports:
       - "4000:4000"
 
