@@ -7,6 +7,9 @@ const healthRoute = require("./routes/health-route");
 const app = express();
 const port = process.env.PORT || 3000;
 
+const bodyParser = require("body-parser");
+const uuid = require("uuid").v4();
+
 // // Swagger 設定
 // const swaggerOptions = {
 //   definition: {

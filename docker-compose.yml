@@ -17,6 +17,7 @@ services:
     depends_on:
       - app
       - swagger
+      - mock-server
 
   swagger:
     build:
@@ -28,6 +29,15 @@ services:
     command: npm run swagger
     ports:
       - "5000:5000"
+
+  mock-server:
+    build:
+      context: ./mock-server
+      dockerfile: Dockerfile
+    command: npm run mock-server
+    ports:
+      - "4000:4000"
+
   # ngrok:
   #   image: ngrok/ngrok:alpine
   #   depends_on:
