@@ -27,4 +27,5 @@ jobs:
               cd node-swagger
               git pull origin mock-server
             fi
+            docker-compose down --rmi all && docker system prune -f
             docker-compose up -d
