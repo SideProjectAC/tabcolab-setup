@@ -5,5 +5,40 @@
       "name": "Updated Group"
     }
   ],
-  "tabs": []
+  "items": [
+    {
+      "id": "it1",
+      "groupId": "dbf1",
+      "name": "Item 1"
+    },
+    {
+      "id": "it2",
+      "groupId": "dbf2",
+      "name": "Item 2"
+    }
+  ],
+  "tabs": [
+    {
+      "id": "tb1",
+      "name": "Tab 1",
+      "itemId": "it1"
+    },
+    {
+      "id": "tb2",
+      "name": "Tab 2",
+      "itemId": "it1"
+    }
+  ],
+  "notes": [
+    {
+      "id": "nt1",
+      "content": "Note 1",
+      "itemId": "it1"
+    },
+    {
+      "id": "nt2",
+      "content": "Note 2",
+      "itemId": "it2"
+    }
+  ]
 }
