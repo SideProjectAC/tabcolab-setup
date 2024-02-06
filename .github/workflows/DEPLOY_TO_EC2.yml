@@ -2,7 +2,7 @@ name: Deploy to EC2
 
 on:
   push:
-    branches: [mock-server]
+    branches: [master, mock-server]
 
 jobs:
   Deploy:
@@ -16,16 +16,16 @@ jobs:
       - name: Connect to EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.EC2_HOST_IPV6 }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }} # Add public key to EC2 instance before running the action
           script: |
             if [ ! -d "node-swagger" ]; then
-              git clone -b mock-server https://github.com/nivek-yang/node-swagger.git
+              git clone -b master https://github.com/nivek-yang/node-swagger.git
               cd node-swagger
             else
               cd node-swagger
-              git pull origin mock-server
+              git pull origin master
             fi
             docker-compose down --rmi all && docker system prune -f
             docker-compose up -d
