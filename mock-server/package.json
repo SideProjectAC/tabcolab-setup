@@ -1,9 +1,10 @@
 {
   "name": "mock-server",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node server.js",
+    "devStart": "nodemon server.js",
     "mock-server": "json-server --watch db.json --port 4000",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,6 +12,13 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
-    "json-server": "^1.0.0-alpha.23"
+    "joi": "^17.12.1",
+    "lowdb": "^7.0.1",
+    "uuid": "^9.0.1"
+  },
+  "keywords": [],
+  "description": "",
+  "devDependencies": {
+    "json-server": "^0.17.4"
   }
 }

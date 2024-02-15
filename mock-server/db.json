@@ -1,44 +1,112 @@
 {
+  "users": [
+    {
+      "id": "1",
+      "username": "user1",
+      "email": "user1@example.com",
+      "password": "password1",
+      "createdAt": "2022-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "username": "user2",
+      "email": "user2@example.com",
+      "password": "password2",
+      "createdAt": "2022-01-02T00:00:00.000Z"
+    },
+    {
+      "username": "mike123",
+      "email": "mike123@gmail.com",
+      "password": "mike123",
+      "id": "ecef3592-76fd-4942-84e6-991556d322f4",
+      "createdAt": "2024/2/15"
+    },
+    {
+      "username": "test123",
+      "email": "test123@gmail.com",
+      "password": "test123",
+      "id": "a19f2361-3fb9-4f4b-b10a-fad33db037b0",
+      "createdAt": "2024/2/15"
+    },
+    {
+      "username": "test123",
+      "email": "test123@gmail.com",
+      "password": "test123",
+      "id": "26c9b503-57d8-43fe-a5cc-96804f0fab92",
+      "createdAt": "2024/2/15"
+    },
+    {
+      "id": "b40b1552-3216-4db3-9691-f5747b40da7e",
+      "username": "test1234",
+      "email": "test1234@gmail.com",
+      "password": "test1234",
+      "createdAt": "2024/2/15"
+    },
+    {
+      "id": "a4675a6a-344c-4268-aba6-31d08b99ee83",
+      "username": "test12345",
+      "email": "test12345@gmail.com",
+      "password": "test12345",
+      "createdAt": "2024/2/15"
+    },
+    {
+      "id": "5ebc05ec-b582-4939-bdb3-62d40e62522d",
+      "username": "test123456",
+      "email": "test123456@gmail.com",
+      "password": "test123456",
+      "createdAt": "2024/2/15"
+    }
+  ],
   "groups": [
     {
-      "id": "dbf1",
-      "name": "Updated Group"
-    }
-  ],
-  "items": [
-    {
-      "id": "it1",
-      "groupId": "dbf1",
-      "name": "Item 1"
+      "id": "1",
+      "title": "Group 1",
+      "icon": "icon1",
+      "items": [
+        {
+          "id": "item1",
+          "category": "tab",
+          "title": "",
+          "favIcon": "",
+          "url": "",
+          "comment": "",
+          "done": "",
+          "createAt": "",
+          "group_id": "1"
+        },
+        {
+          "id": "item2",
+          "category": "note",
+          "title": "",
+          "favIcon": "",
+          "url": "",
+          "comment": "",
+          "done": "",
+          "createAt": "",
+          "group_id": "1"
+        },
+        {
+          "id": "item3",
+          "category": "todo",
+          "title": "",
+          "favIcon": "",
+          "url": "",
+          "comment": "",
+          "done": "",
+          "createAt": "",
+          "group_id": "1"
+        }
+      ]
     },
     {
-      "id": "it2",
-      "groupId": "dbf2",
-      "name": "Item 2"
-    }
-  ],
-  "tabs": [
-    {
-      "id": "tb1",
-      "name": "Tab 1",
-      "itemId": "it1"
-    },
-    {
-      "id": "tb2",
-      "name": "Tab 2",
-      "itemId": "it1"
-    }
-  ],
-  "notes": [
-    {
-      "id": "nt1",
-      "content": "Note 1",
-      "itemId": "it1"
-    },
-    {
-      "id": "nt2",
-      "content": "Note 2",
-      "itemId": "it2"
+      "id": "2",
+      "title": "Group 2",
+      "icon": "icon2",
+      "items": [
+        {
+          "id": "item2"
+        }
+      ]
     }
   ]
 }

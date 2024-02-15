@@ -5,22 +5,9 @@ const userSchema = new mongoose.Schema({
   email: String,
   password: String,
   createdAt: { type: Date, default: Date.now },
-  workspaces: [{ type: String, ref: "Workspace" }],
 });
 
 const User = mongoose.model("User", userSchema);
-
-const workspaceSchema = new mongoose.Schema({
-  id: { type: String, unique: true },
-  title: String,
-  icon: String,
-  position: Number,
-  createdAt: { type: Date, default: Date.now },
-  user_id: { type: String, ref: "User" },
-  groups: [{ type: String, ref: "Group" }],
-});
-
-const Workspace = mongoose.model("Workspace", workspaceSchema);
 
 const groupSchema = new mongoose.Schema({
   id: { type: String, unique: true },
