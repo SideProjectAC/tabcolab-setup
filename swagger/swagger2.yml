@@ -1,0 +1,432 @@
+openapi: 3.0.0
+info:
+  title: Tabcolab
+  description: Your API Description
+  version: 1.0.0
+paths:
+  /groups:
+    get:
+      summary: Display all groups and their items in workspace
+      description: Display all groups and their items in workspace.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              example:
+                Groups.json: Groups.json content
+    post:
+      summary: Create a new group in workspace
+      description: Create a new group in workspace.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/requestBodies/DragAndDropGroup'
+                - $ref: '#/components/requestBodies/SidebarGroup'
+                - $ref: '#/components/requestBodies/EmptyGroup'
+            examples:
+              DragAndDropGroup:
+                summary: an example of car
+                value:
+                  owner: baeldung
+                  plate: AEX305
+              bike:
+                summary: an example of bike
+                value:
+                  owner: john doe
+                  speed: 25
+      responses:
+        '200':
+          description: Group created successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/responses/DADGroupCreatedResponse'
+                  - $ref: '#/components/responses/SidebarGroupCreatedResponse'
+                  - $ref: '#/components/responses/EmptyGroupCreatedResponse'
+  /groups/{group_id}:
+    patch:
+      summary: Modify group info or status
+      description: Modify group info or status.
+      parameters:
+        - name: group_id
+          in: path
+          description: Group ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/requestBodies/GroupUpdate'
+                - $ref: '#/components/requestBodies/GroupChangePos'
+      responses:
+        '200':
+          description: Success
+    delete:
+      summary: Delete groups (including their tabs)
+      description: Delete groups (including their tabs).
+      parameters:
+        - name: group_id
+          in: path
+          description: Group ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+  /groups/{group_id}/items/{item_id}:
+    parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Group/properties/group_id'
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Item/properties/item_id'
+    patch:
+      summary: Move item (tab, note, todo) within or between existing Groups
+      operationId: groupItemDragPatchGroup
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Item/properties/item_type'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    targetItem_position:
+                      type: integer
+                - type: object
+                  properties:
+                    targetItem_position:
+                      type: integer
+                    targetGroup_id:
+                      $ref: '#/components/schemas/Group/properties/group_id'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '422':
+          description: Unprocessable Entity
+    delete:
+      summary: Remove item (tab, note, todo) from existing Group
+      operationId: groupPatchItem
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '422':
+          description: Unprocessable Entity
+  /groups/{group_id}/tabs:
+    parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Add a new tab to an existing Group by dragging from Sidebar
+      operationId: sidebarDragCreateGroupTab
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                browserTab_favIconURL:
+                  $ref: '#/components/schemas/Item/properties/browserTab_favIconURL'
+                browserTab_title:
+                  $ref: '#/components/schemas/Item/properties/browserTab_title'
+                browserTab_url:
+                  $ref: '#/components/schemas/Item/properties/browserTab_url'
+                targetItem_position:
+                  type: integer
+        responses:
+          '200':
+            description: Success
+  /groups/{group_id}/tabs/{item_id}:
+    parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Group/properties/group_id'
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Item/properties/item_id'
+    post:
+      summary: Add a note to a tab
+      operationId: groupTabCreateNote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note_content:
+                  $ref: '#/components/schemas/Item/properties/note_content'
+                note_bgColor:
+                  $ref: '#/components/schemas/Item/properties/note_bgColor'
+    patch:
+      summary: Modify a note within a tab
+      operationId: groupTabPatchNote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note_content:
+                  $ref: '#/components/schemas/Item/properties/note_content'
+                note_bgColor:
+                  $ref: '#/components/schemas/Item/properties/note_bgColor'
+  /groups/{group_id}/notes:
+    post:
+      summary: Add a note to an existing group
+      description: Add a note to an existing group.
+      parameters:
+        - name: group_id
+          in: path
+          description: Group ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/Group/properties/group_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/Note'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/ItemResponse'
+  /groups/{group_id}/notes/{item_id}:
+    patch:
+      summary: Change a note to a todo in an existing group
+      description: Change a note to a todo in an existing group.
+      parameters:
+        - name: group_id
+          in: path
+          description: Group ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/Group/properties/group_id'
+        - name: item_id
+          in: path
+          description: Item ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/Item/properties/item_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/TodoUpdate'
+      responses:
+        '200':
+          description: Success
+  /groups/{group_id}/todos/{item_id}:
+    patch:
+      summary: Change a todo status in an existing group
+      description: Change a todo status in an existing group.
+      parameters:
+        - name: group_id
+          in: path
+          description: Group ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/Group/properties/group_id'
+        - name: item_id
+          in: path
+          description: Item ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/Item/properties/item_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/requestBodies/TodoUpdate'
+                - $ref: '#/components/requestBodies/TodoStatusUpdate'
+      responses:
+        '200':
+          description: Success
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        item_id:
+          type: string
+        item_type:
+          type: integer
+          description: '0: Tab, 1: Note, 2: Todo'
+        browserTab_favIconURL:
+          type: string
+        browserTab_title:
+          type: string
+        browserTab_url:
+          type: string
+        note_content:
+          type: string
+        note_bgColor:
+          type: string
+        doneStatus:
+          type: boolean
+    Group:
+      type: object
+      properties:
+        group_id:
+          type: string
+          description: The group ID.
+        group_icon:
+          type: string
+        group_title:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+    User:
+      type: object
+      properties:
+        user_id:
+          type: string
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+  requestBodies:
+    GroupUpdate:
+      description: Change group info.
+      type: object
+      properties:
+        group_icon:
+          $ref: '#/components/schemas/Group/properties/group_icon'
+        group_title:
+          $ref: '#/components/schemas/Group/properties/group_title'
+    GroupChangePos:
+      description: Change group position.
+      type: object
+      properties:
+        group_pos:
+          type: integer
+    Note:
+      type: object
+      properties:
+        note_content:
+          type: string
+        note_bgColor:
+          type: string
+    NoteUpdate:
+      type: object
+      properties:
+        item_type:
+          type: string
+          enum:
+            - note
+    TodoUpdate:
+      description: Change a  todo to a  note in an existing group.
+      type: object
+      properties:
+        item_type:
+          type: string
+          enum:
+            - todo
+    TodoStatusUpdate:
+      description: Check/uncheck a todo in an existing group.
+      type: object
+      properties:
+        doneStatus:
+          type: boolean
+    DragAndDropGroup:
+      type: object
+      properties:
+        group_icon:
+          $ref: '#/components/schemas/Group/properties/group_icon'
+        group_title:
+          $ref: '#/components/schemas/Group/properties/group_title'
+    SidebarGroup:
+      type: object
+      properties:
+        browserTab_favIconURL:
+          $ref: '#/components/schemas/Item/properties/browserTab_favIconURL'
+        browserTab_title:
+          $ref: '#/components/schemas/Item/properties/browserTab_title'
+        browserTab_url:
+          $ref: '#/components/schemas/Item/properties/browserTab_url'
+        group_icon:
+          $ref: '#/components/schemas/Group/properties/group_icon'
+        group_title:
+          $ref: '#/components/schemas/Group/properties/group_title'
+    EmptyGroup:
+      type: object
+      properties:
+        item_id:
+          $ref: '#/components/schemas/Item/properties/item_id'
+  responses:
+    DADGroupCreatedResponse:
+      description: Group created successfully
+      type: object
+      properties:
+        group_id:
+          $ref: '#/components/schemas/Group/properties/group_id'
+    SidebarGroupCreatedResponse:
+      description: Sidebar group created successfully
+      type: object
+      properties:
+        group_id:
+          $ref: '#/components/schemas/Group/properties/group_id'
+        item_id:
+          $ref: '#/components/schemas/Item/properties/item_id'
+        message:
+          type: string
+          value: Sidebar group created successfully
+    EmptyGroupCreatedResponse:
+      description: Empty group created successfully
+      type: object
+      properties:
+        group_id:
+          $ref: '#/components/schemas/Group/properties/group_id'
+    ItemResponse:
+      type: object
+      properties:
+        item_id:
+          type: string
+    GroupResponse:
+      type: object
+      properties:
+        group_id:
+          type: string
