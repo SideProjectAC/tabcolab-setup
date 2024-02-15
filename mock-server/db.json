@@ -4,7 +4,7 @@
       "id": "1",
       "username": "user1",
       "email": "user1@example.com",
-      "password": "password1",
+      "phttp://localhost:4000/usersassword": "password1",
       "createdAt": "2022-01-01T00:00:00.000Z"
     },
     {
@@ -54,6 +54,41 @@
       "username": "test123456",
       "email": "test123456@gmail.com",
       "password": "test123456",
+      "createdAt": "2024/2/15"
+    },
+    {
+      "id": "4a9d5000-3087-4cf8-bceb-0635355afb40",
+      "username": "chen123",
+      "email": "chen123@gmail.com",
+      "password": "123456",
+      "createdAt": "2024/2/15"
+    },
+    {
+      "id": "754c2563-135d-4a65-bcf9-59ebbadffdb1",
+      "username": "chen1234",
+      "email": "chen1234@gmail.com",
+      "password": "123456",
+      "createdAt": "2/15/2024"
+    },
+    {
+      "id": "83d6820d-ad28-485f-8fb6-d1104e1d38fb",
+      "username": "chen12345",
+      "email": "chen12345@gmail.com",
+      "password": "123456",
+      "createdAt": "2/15/2024"
+    },
+    {
+      "id": "f711b419-d652-40d6-9c98-ef6eedc2fcbb",
+      "username": "andy123",
+      "email": "andy123@gmail.com",
+      "password": "andy123",
+      "createdAt": "2/15/2024"
+    },
+    {
+      "id": "ad4f4a9a-4c0a-45bd-86fb-ce361a5d373c",
+      "username": "andy1234",
+      "email": "andy1234@gmail.com",
+      "password": "andy1234",
       "createdAt": "2024/2/15"
     }
   ],

@@ -29,7 +29,12 @@ exports.register = (req, res) => {
       res.status(400).send("Username already exists");
     } else {
       // 否則，將新用戶存入數據庫
-      usersCollection.insert(newUser).write();
+      usersCollection
+        .insert(newUser)
+        .write()
+        .then(() => {
+          console.log("Data written to file");
+        });
       res.status(200).send("User registered successfully");
     }
   }

@@ -34,6 +34,8 @@ services:
     build:
       context: ./mock-server
       dockerfile: Dockerfile
+    volumes:
+      - ./mock-server/db.json:/app/db.json
     ports:
       - "4000:4000"
 
