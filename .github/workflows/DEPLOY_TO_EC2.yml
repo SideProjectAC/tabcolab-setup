@@ -46,4 +46,4 @@ jobs:
             git pull origin master
           fi
           docker-compose down --rmi all && docker system prune -f
-          docker-compose up -d
+          docker-compose up --build -d
