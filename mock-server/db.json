@@ -132,13 +132,6 @@
       "email": "kevin1234@gmail.com",
       "password": "kevin1234",
       "createdAt": "2/16/2024"
-    },
-    {
-      "id": "6fc22535-b037-478b-8346-c55a25e529c1",
-      "username": "kevin12345",
-      "email": "kevin12345@gmail.com",
-      "password": "kevin12345",
-      "createdAt": "2/16/2024"
     }
   ],
   "groups": [
