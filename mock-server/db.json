@@ -90,20 +90,6 @@
       "email": "andy1234@gmail.com",
       "password": "andy1234",
       "createdAt": "2024/2/15"
-    },
-    {
-      "id": "b4c1874c-1b28-453d-bf78-334afcec75e1",
-      "username": "andy123456",
-      "email": "andy123456@gmail.com",
-      "password": "andy123456",
-      "createdAt": "2/16/2024"
-    },
-    {
-      "id": "e9c10163-f9c9-47bb-b970-5304bf9b2b5d",
-      "username": "andy1234567",
-      "email": "andy1234567@gmail.com",
-      "password": "andy1234567",
-      "createdAt": "2/16/2024"
     }
   ],
   "groups": [

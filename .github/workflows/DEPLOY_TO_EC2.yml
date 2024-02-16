@@ -13,37 +13,37 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Connect to EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }} # Ipv4
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }} # Add public key to EC2 instance before running the action
-          script: |
-            if [ ! -d "node-swagger" ]; then
-              git clone -b master https://github.com/nivek-yang/node-swagger.git
-              cd node-swagger
-            else
-              cd node-swagger
-              git pull origin master
-            fi
-            docker-compose down --rmi all && docker system prune -f
-            docker-compose up -d
-      # - name: Configure AWS credentials -
-      #   uses: aws-actions/configure-aws-credentials@v1
+      # - name: Connect to EC2
+      #   uses: appleboy/ssh-action@master
       #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: ap-northeast-1
+      #     host: ${{ secrets.EC2_HOST }} # Ipv4
+      #     username: ${{ secrets.EC2_USERNAME }}
+      #     key: ${{ secrets.EC2_SSH_KEY }} # Add public key to EC2 instance before running the action
+      #     script: |
+      #       if [ ! -d "node-swagger" ]; then
+      #         git clone -b master https://github.com/nivek-yang/node-swagger.git
+      #         cd node-swagger
+      #       else
+      #         cd node-swagger
+      #         git pull origin master
+      #       fi
+      #       docker-compose down --rmi all && docker system prune -f
+      #       docker-compose up -d
+      - name: Configure AWS credentials -
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-1
 
-      # - name: Deploy to EC2
-      #   run: |
-      #     if [ ! -d "node-swagger" ]; then
-      #       git clone -b master https://github.com/nivek-yang/node-swagger.git
-      #       cd node-swagger
-      #     else
-      #       cd node-swagger
-      #       git pull origin master
-      #     fi
-      #     docker-compose down --rmi all && docker system prune -f
-      #     docker-compose up --build -d
+      - name: Deploy to EC2
+        run: |
+          if [ ! -d "node-swagger" ]; then
+            git clone -b master https://github.com/nivek-yang/node-swagger.git
+            cd node-swagger
+          else
+            cd node-swagger
+            git pull origin master
+          fi
+          docker-compose down --rmi all && docker system prune -f
+          docker-compose up --build -d
