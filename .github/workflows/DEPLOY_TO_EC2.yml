@@ -36,7 +36,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-1
 
-      - name: Deploy to EC2
+      - name: Deploy to EC2 # need ipv4
         run: |
           if [ ! -d "node-swagger" ]; then
             git clone -b master https://github.com/nivek-yang/node-swagger.git
