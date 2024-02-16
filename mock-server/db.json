@@ -76,20 +76,6 @@
       "email": "chen12345@gmail.com",
       "password": "123456",
       "createdAt": "2/15/2024"
-    },
-    {
-      "id": "f711b419-d652-40d6-9c98-ef6eedc2fcbb",
-      "username": "andy123",
-      "email": "andy123@gmail.com",
-      "password": "andy123",
-      "createdAt": "2/15/2024"
-    },
-    {
-      "id": "ad4f4a9a-4c0a-45bd-86fb-ce361a5d373c",
-      "username": "andy1234",
-      "email": "andy1234@gmail.com",
-      "password": "andy1234",
-      "createdAt": "2024/2/15"
     }
   ],
   "groups": [
