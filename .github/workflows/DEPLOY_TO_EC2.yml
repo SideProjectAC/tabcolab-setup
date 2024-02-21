@@ -21,7 +21,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }} # Add public key to EC2 instance before running the action
           script: |
             if [ ! -d "tabcolab-setup" ]; then
-              git clone -b master git@github.com:SideProjectAC/tabcolab-setup.git
+              git clone -b master https://github.com/SideProjectAC/tabcolab-setup.git
               cd tabcolab-setup
             else
               cd tabcolab-setup
