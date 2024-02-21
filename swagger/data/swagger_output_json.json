@@ -1,0 +1,834 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Tabcolab",
+      "description": "Your API Description",
+      "version": "1.0.0"
+    },
+    "servers": [
+        {
+          "url": "http://localhost:5050"
+        }
+      ],
+      "tags": [
+        {
+          "name": "Groups",
+          "description": "Operations related to groups management"
+        },
+        {
+          "name": "Items(Spec)",
+          "description": "Specific operations related to items management"
+        },
+        {
+          "name": "Items",
+          "description": "General operations related to items management"
+        }
+      ],
+    "paths": {
+      "/groups": {
+        "get": {
+          "tags": ["Groups"],
+          "summary": "Display all groups and their items in workspace",
+          "description": "Display all groups and their items in workspace.",
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema":{
+                    "type": "array",
+                    "items":{
+                    "$ref":"#/components/schemas/Group"}},
+                  "example": {
+                    "groups": [
+                        {
+                            "id": "1",
+                            "group_icon": "group_icon_url",
+                            "group_title": "Group 1",
+                            "items": [
+                            {
+                                "item_id": "1",
+                                "item_type": 0,
+                                "browserTab_favIconURL": "favicon_url",
+                                "browserTab_title": "Tab Title",
+                                "browserTab_url": "tab_url",
+                                "note_content": "",
+                                "note_bgColor": "#ffffff"
+                            },
+                            {
+                                "item_id": "2",
+                                "item_type": 1,
+                                "note_content": "Note content",
+                                "note_bgColor": "#ffffff"
+                            },
+                            {
+                                "item_id": "3",
+                                "item_type": 2,
+                                "doneStatus": false
+                            }
+                            ]}]
+                  }
+                }
+              }
+            },
+            "404": {
+                "description": "No group in workspace"
+            }
+          }
+        },
+        "post": {
+          "tags": ["Groups"],
+          "summary": "Create a new group in workspace",
+          "description": "Create a new group in the workspace. <br> It includes three scenarios: <br> 1. Create Group at Blank Space; <br> 2. Create Group by Dragging a Tab From Sidebar to Blank Space;<br> 3. Create Group by Dragging a Tab From a Group to Blank Space. ",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/requestBodies/BlankGroup" },
+                    { "$ref": "#/components/requestBodies/SidebarGroup" },
+                    { "$ref": "#/components/requestBodies/GroupTabtoBlank" }
+                  ]
+                },
+                "examples":{
+                  "BlankGroup":{
+                      "summary": "Create Group at Blank",
+                      "value":{
+                        "group_icon": "https://example.com/group_icon1.png",
+                        "group_title": "Group 1"
+                      }},
+                  "SidebartoBlank":{
+                      "summary": "Sidebar to Blank",
+                      "value":{
+                        "browserTab_favIconURL": "https://example.com/favicon.png",
+                        "browserTab_title": "Example Tab Title",
+                        "browserTab_url": "https://example.com",
+                        "group_icon": "https://example.com/group_icon2.png",
+                        "group_title": "Group 2"
+                      }
+                  },
+                  "GroupTabtoBlank":{
+                    "summary": "Group Tab to Blank",
+                    "value":{
+                        "sourceGroup_id":"1",
+                        "item_id": "1"}
+                }
+              }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Group created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "oneOf": [
+                      { "$ref": "#/components/responses/BlankGroupCreatedResponse" },
+                      { "$ref": "#/components/responses/SidebarGroupCreatedResponse" },
+                      { "$ref": "#/components/responses/GTtoBlankCreatedResponse" }
+                    ]
+                  }
+                }
+              }
+            },
+            "400": {
+                "description": "Bad Request"
+            }
+          }
+        }
+      },
+      "/groups/{group_id}": {
+        "patch": {
+          "tags": ["Groups"],
+          "summary": "Modify group info or status",
+          "description": "Modify group information  or status:<br> 1. Modify group icon, group title <br>2. Changing group position",
+          "parameters": [
+            {
+              "name": "group_id",
+              "in": "path",
+              "description": "Group ID",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/Group/properties/group_id"
+              },
+              "example":1
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf":[
+                    {"$ref": "#/components/requestBodies/GroupUpdate"},
+                    {"$ref": "#/components/requestBodies/GroupChangePos"}
+                  ]
+                },
+                "examples": {
+                    "GroupUpdateExample": {
+                      "summary": "Modifying group information",
+                      "value": {
+                        "group_icon": "https://example.com/updated_icon.png",
+                        "group_title": "Updated Group Title"
+                      }
+                    },
+                    "GroupChangePosExample": {
+                      "summary": "Changing group position",
+                      "value": {
+                        "group_pos": 2
+                      }
+                    }
+                  }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Groups"],
+          "summary": "Delete groups (including their tabs)",
+          "description": "Delete groups (including their tabs).",
+          "parameters": [
+            {
+              "name": "group_id",
+              "in": "path",
+              "description": "Group ID",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/Group/properties/group_id"
+              },
+              "example":1
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Success"
+            },              
+            "400": {
+              "description": "Bad Request"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/groups/{group_id}/tabs": {
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "$ref": "#/components/schemas/Group/properties/group_id"
+            },
+            "example":1
+          }
+        ],
+        "post": {
+          "tags": ["Items(Spec)"],
+          "summary": "Add a new tab to an existing Group by dragging from Sidebar",
+          "operationId": "sidebarDragCreateGroupTab",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "browserTab_favIconURL": {
+                        "$ref": "#/components/schemas/Item/properties/browserTab_favIconURL"
+                    },
+                    "browserTab_title": {
+                        "$ref": "#/components/schemas/Item/properties/browserTab_title"
+                    },
+                    "browserTab_url": {
+                        "$ref": "#/components/schemas/Item/properties/browserTab_url"
+                    },
+                    "targetItem_position": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "400":{
+              "description":"Bad Request"
+            }
+          }
+        }
+      },
+      "/groups/{group_id}/tabs/{item_id}": {
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "$ref": "#/components/schemas/Group/properties/group_id"
+            },
+            "example":2
+          },
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "$ref": "#/components/schemas/Item/properties/item_id"
+            },
+            "example":3
+          }
+        ],
+        "patch": {
+          "tags": ["Items(Spec)"],
+          "summary": "Add or Modify a note within a tab",
+          "operationId": "groupTabPatchNote",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "note_content": {
+                        "$ref": "#/components/schemas/Item/properties/note_content"
+                    },
+                    "note_bgColor": {
+                        "$ref": "#/components/schemas/Item/properties/note_bgColor"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses":{
+            "200": {
+                "description": "Success"
+              },
+            "400": {
+                "description": "Bad Request"
+              },
+            "404": {
+                "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/groups/{group_id}/notes": {
+        "post": {
+          "tags": ["Items(Spec)"],
+          "summary": "Add a note to an existing group",
+          "description": "Add a note to an existing group.",
+          "parameters": [
+            {
+              "name": "group_id",
+              "in": "path",
+              "description": "Group ID",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/Group/properties/group_id"
+              },
+              "example":"2"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/requestBodies/Note"
+                }
+
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "item_id": {
+                        "$ref": "#/components/schemas/Item/properties/item_id"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400":{
+                "description": "Bad Request"
+            }
+          }
+        }
+      },
+      "/groups/{group_id}/notes/{item_id}": {
+        "patch": {
+          "tags": ["Items(Spec)"],
+          "summary": "Change a note to a todo in an existing group",
+          "description": "Change a note to a todo in an existing group.",
+          "parameters": [
+            {
+              "name": "group_id",
+              "in": "path",
+              "description": "Group ID",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/Group/properties/group_id"
+              },
+              "example":2
+            },
+            {
+              "name": "item_id",
+              "in": "path",
+              "description": "Item ID",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/Item/properties/item_id"
+              },
+              "example":5
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                    "$ref": "#/components/requestBodies/TabNotetoTodo"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/groups/{group_id}/todos/{item_id}": {
+        "patch": {
+          "tags": ["Items(Spec)"],
+          "summary": "Change a todo status in an existing group",
+          "description": "Change a todo status in an existing group. <br> 1. Change item type of todo to note <br>2. Update the doneStatus of  todo",
+          "parameters": [
+            {
+              "name": "group_id",
+              "in": "path",
+              "description": "Group ID",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/Group/properties/group_id"
+              },
+              "example":2
+            },
+            {
+              "name": "item_id",
+              "in": "path",
+              "description": "Item ID",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/Item/properties/item_id"
+              },
+              "example":6
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf":[
+                    {"$ref": "#/components/requestBodies/TodotoNote"},
+                    {"$ref": "#/components/requestBodies/TodoStatusUpdate"}
+                  ]
+                },
+                "examples": {
+                    "TodotoNoteExample": {
+                      "summary": "Change todo to note",
+                      "value": {
+                        "item_type": 1
+                      }
+                    },
+                    "TodoStatusUpdateExample": {
+                      "summary": "Update todo status",
+                      "value": {
+                        "doneStatus": true
+                      }
+                    }
+                  }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/groups/{group_id}/items/{item_id}": {
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "$ref": "#/components/schemas/Group/properties/group_id"
+            },
+            "example":1
+          },
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+                "$ref": "#/components/schemas/Item/properties/item_id"
+            },
+            "example":1
+          }
+        ],
+        "patch": {
+          "tags": ["Items"],
+          "summary": "Move item (tab, note, todo) within or between existing Groups",
+          "description": "Move item (tab, note, todo) :<br> 1. Within existing Groups <br> 2. Between existing Groups",
+          "operationId": "groupItemDragPatchGroup",
+          "parameters": [
+            {
+              "name": "item_type",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/Item/properties/item_type"
+              },
+              "example":0
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf":[
+                  {"type": "object",
+                  "description":"Move item within existing Groups",
+                  "properties": {
+                    "targetItem_position": {
+                      "type": "integer"
+                    }}
+                  },                  
+                  {"type": "object",
+                  "description":"Move item between existing Groups",
+                  "properties": {
+                    "targetItem_position": {
+                        "type": "integer"
+                    },           
+                    "targetGroup_id":{
+                        "$ref": "#/components/schemas/Group/properties/group_id"
+                    }}
+                  }
+                  ]
+                },
+                "examples": {
+                    "MoveWithinGroup": {
+                        "summary": "Moving an item within the same group.",
+                        "value": {
+                            "targetItem_position": 2
+                        }
+                    },
+                    "MoveToDifferentGroup": {
+                        "summary": "Moving an item to a different group.",
+                        "value": {
+                            "targetItem_position": 1,
+                            "targetGroup_id": "2"
+                        }
+                    }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+            "tags": ["Items"],
+            "summary": "Remove item (tab, note, todo) from existing Group",
+            "operationId": "groupPatchItem",
+            "responses": {
+              "204": {
+                "description": "Success"
+              },
+              "400": {
+                "description": "Bad Request"
+              },
+              "404": {
+                "description": "Not Found"
+              }
+            }
+          }
+      }
+    },
+    "components": {
+        "schemas": {
+            "Item": {
+              "type": "object",
+              "properties": {
+                "item_id": {
+                  "type": "string"
+                },
+                "item_type": {
+                  "type": "integer",
+                  "enums":[0,1,2],
+                  "description": "0: Tab, 1: Note, 2: Todo"
+                },
+                "browserTab_favIconURL": {
+                  "type": "string"
+                },
+                "browserTab_title": {
+                  "type": "string"
+                },
+                "browserTab_url": {
+                  "type": "string"
+                },
+                "note_content": {
+                  "type": "string"
+                },
+                "note_bgColor": {
+                  "type": "string"
+                },
+                "doneStatus": {
+                  "type": "boolean",
+                  "description": "Indicates whether the todo is done or not"
+                }
+              }
+            },
+            "Group": {
+              "type": "object",
+              "properties": {
+                "group_id": {
+                  "type": "string",
+                  "description": "The group ID."
+                },
+                "group_icon": {
+                  "type": "string"
+                },
+                "group_title": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Item"
+                  }
+                }
+              }
+            },
+            "User": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string"
+                },
+                "groups": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Group"
+                  }
+                }
+              }
+            }
+          },
+    "requestBodies":{
+        "GroupUpdate": {
+            "description": "Change group info.",
+            "type": "object",
+            "properties": {
+                "group_icon": {
+                    "$ref": "#/components/schemas/Group/properties/group_icon"
+                },
+                "group_title": {
+                    "$ref": "#/components/schemas/Group/properties/group_title"
+                }
+            }
+        },
+        "GroupChangePos": {
+            "description": "Change group position.",
+            "type": "object",
+            "properties": {
+                "group_pos": {
+                    "type": "integer"
+                }
+            }
+        },
+        "Note": {
+          "description":"Create a note in group",
+          "type": "object",
+          "properties": {
+            "note_content": {
+              "type": "string"
+            },
+            "note_bgColor": {
+              "type": "string"
+            }
+          },
+          "example": {
+            "note_content": "",
+            "note_bgColor":"#ffffff"
+          }
+        },
+        "TabNotetoTodo": {
+        "type": "object",
+        "properties": {
+            "item_type": {
+            "type": "integer",
+            "enum": [
+                2
+            ]
+            }
+        }
+        },
+        "TodotoNote": {
+          "description": "Change a  todo to a  note in an existing group.",
+          "type": "object",
+          "properties": {
+            "item_type": {
+              "type": "integer",
+              "enum": [
+                1
+              ]
+            }
+          }
+        },
+        "TodoStatusUpdate": {
+          "description": "Check/uncheck a todo in an existing group.",
+          "type": "object",
+          "properties": {
+            "doneStatus": {
+              "type": "boolean"
+            }
+          }
+        },
+        "BlankGroup": {
+            "description": "Create Group at Blank Space.",
+            "type": "object",
+            "properties": {
+              "group_icon": {
+                "$ref": "#/components/schemas/Group/properties/group_icon"
+                },
+              "group_title": {
+                "$ref": "#/components/schemas/Group/properties/group_title"
+              }
+            }
+          },
+          "SidebarGroup": {
+            "description": "Create Group by Dragging a Tab From Sidebar to Blank Space.",
+            "type": "object",
+            "properties": {
+                "browserTab_favIconURL": {
+                    "$ref": "#/components/schemas/Item/properties/browserTab_favIconURL"
+                    },
+                "browserTab_title": {
+                    "$ref": "#/components/schemas/Item/properties/browserTab_title"
+                    },
+                "browserTab_url": {
+                    "$ref": "#/components/schemas/Item/properties/browserTab_url"
+                    },          
+                "group_icon": {
+                    "$ref": "#/components/schemas/Group/properties/group_icon"
+                },
+                "group_title": {
+                    "$ref": "#/components/schemas/Group/properties/group_title"
+                }
+            }
+          },
+          "GroupTabtoBlank": {
+            "description": "Create Group by Dragging a Tab From a Group to Blank Space.",
+            "type": "object",
+            "properties": {
+            "sourceGroup_id": {
+                "$ref": "#/components/schemas/Group/properties/group_id"
+                },
+              "item_id": {
+                "$ref": "#/components/schemas/Item/properties/item_id"
+              }
+            }
+          }
+    },
+    "responses":{
+        "BlankGroupCreatedResponse": {
+            "description": "group created at blank spcace successfully",
+            "type": "object",
+            "properties": {
+                "group_id": {
+                    "$ref": "#/components/schemas/Group/properties/group_id"
+                }
+
+            }
+        },
+        "SidebarGroupCreatedResponse": {
+            "description": "Group created with tab from sidebar successfully",
+            "type": "object",
+            "properties": {
+                "group_id": {
+                    "$ref": "#/components/schemas/Group/properties/group_id"
+                    },
+                "item_id": {
+                    "$ref": "#/components/schemas/Item/properties/item_id"
+                    },
+                "message":{
+                    "type":"string",
+                    "value":"Sidebar group created successfully"
+                }
+            }
+        },
+        "GTtoBlankCreatedResponse": {
+            "description": "Group created  with tab from other group successfully",   
+            "type": "object",
+            "properties": {
+                "group_id": {
+                    "$ref": "#/components/schemas/Group/properties/group_id"
+                  }
+            }
+          }
+      }
+    }
+    
+  }
+  
