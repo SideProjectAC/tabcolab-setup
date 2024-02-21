@@ -20,11 +20,11 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }} # Add public key to EC2 instance before running the action
           script: |
-            if [ ! -d "node-swagger" ]; then
-              git clone -b master https://github.com/nivek-yang/node-swagger.git
-              cd node-swagger
+            if [ ! -d "tabcolab-setup" ]; then
+              git clone -b master git@github.com:SideProjectAC/tabcolab-setup.git
+              cd tabcolab-setup
             else
-              cd node-swagger
+              cd tabcolab-setup
               git pull origin master
             fi
             docker-compose down --rmi all && docker system prune -f
