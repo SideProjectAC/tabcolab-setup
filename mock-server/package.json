@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "copy": "cp -r ../app/routes/* ./routes && cp -r ../app/controllers/* ./controllers",
     "start": "node server.js",
     "devStart": "nodemon server.js",
     "mock-server": "json-server --watch db.json --port 4000",
