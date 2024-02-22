@@ -468,83 +468,91 @@ const createGroup = (req, res) => {
 //   db.get("groups").push(newGroup).write();
 // };
 
-const updateGroup = (req, res) => {
+const updateGroup = async (req, res) => {
   const { group_id } = req.params;
-  const group = db.get("groups").find({ id: group_id }).value();
-  if (!group) {
-    return res.status(404).json({ error: "Group not found" });
-  }
-
   const { group_icon, group_title, group_pos } = req.body;
-  if (group_id && group_icon && group_title) {
-    group.group_icon = group_icon;
-    group.group_title = group_title;
 
-    /**
-     * @openapi
-     * components:
-     *   requestBodies:
-     *     GroupUpdate:
-     *       description: Change group info.
-     *       type: object
-     *       properties:
-     *         group_icon:
-     *           $ref: '#/components/schemas/Group/properties/group_icon'
-     *         group_title:
-     *           $ref: '#/components/schemas/Group/properties/group_title'
-     */
-
-    db.write();
-    res.json({ message: "Group updated successfully" });
-  } else if (group_id && group_pos !== undefined) {
-    const groups = db.get("groups").value();
-
-    const groupIndex = groups.findIndex((group) => group.id === group_id);
-    if (groupIndex === -1) {
+  try {
+    const group = await db.get("groups").find({ id: group_id }).value();
+    if (!group) {
       return res.status(404).json({ error: "Group not found" });
     }
 
-    const targetIndex = group_pos;
-    if (isNaN(targetIndex) || targetIndex < 0 || targetIndex >= groups.length) {
-      return res.status(400).json({ error: "Invalid target position" });
+    if (group_icon && group_title) {
+      group.group_icon = group_icon;
+      group.group_title = group_title;
+
+      /**
+       * @openapi
+       * components:
+       *   requestBodies:
+       *     GroupUpdate:
+       *       description: Change group info.
+       *       type: object
+       *       properties:
+       *         group_icon:
+       *           $ref: '#/components/schemas/Group/properties/group_icon'
+       *         group_title:
+       *           $ref: '#/components/schemas/Group/properties/group_title'
+       */
+
+      await db.write();
+      return res.json({ message: "Group updated successfully" });
     }
-    /**
-     * @openapi
-     * components:
-     *   requestBodies:
-     *     GroupChangePos:
-     *       description: Change group position.
-     *       type: object
-     *       properties:
-     *         group_pos:
-     *           type: integer
-     *           minimum: 0
-     */
 
-    // Remove the group from its current position
-    const [movedGroup] = groups.splice(groupIndex, 1);
+    if (group_pos !== undefined) {
+      const groups = await db.get("groups").value();
+      const groupIndex = groups.findIndex((group) => group.id === group_id);
+      if (groupIndex === -1) {
+        return res.status(404).json({ error: "Group not found" });
+      }
 
-    // Insert the group at the new position
-    groups.splice(targetIndex, 0, movedGroup);
-    db.write();
-    res.status(200).json({ message: "Group position updated successfully" });
-  } else {
+      const targetIndex = group_pos;
+      if (
+        isNaN(targetIndex) ||
+        targetIndex < 0 ||
+        targetIndex >= groups.length
+      ) {
+        return res.status(400).json({ error: "Invalid target position" });
+      }
+
+      /**
+       * @openapi
+       * components:
+       *   requestBodies:
+       *     GroupChangePos:
+       *       description: Change group position.
+       *       type: object
+       *       properties:
+       *         group_pos:
+       *           type: integer
+       *           minimum: 0
+       */
+      const [movedGroup] = groups.splice(groupIndex, 1);
+      groups.splice(targetIndex, 0, movedGroup);
+      await db.write();
+      return res
+        .status(200)
+        .json({ message: "Group position updated successfully" });
+    }
+
     return res.status(400).json({ error: "Invalid request body" });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };
 
-const deleteGroup = (req, res) => {
+const deleteGroup = async (req, res) => {
   const { group_id } = req.params;
-  const group = db.get("groups").find({ id: group_id }).value();
-  if (!group) {
-    return res.status(404).json({ error: "Group not found" });
-  }
-  //NOTE - 沒有規定req body ，那需要有"Invalid request body？
-  if (group) {
-    db.get("groups").remove({ id: group_id }).write();
+  try {
+    const group = await db.get("groups").find({ id: group_id }).value();
+    if (!group) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+    await db.get("groups").remove({ id: group_id }).write();
     return res.status(204).json({ message: "Group deleted successfully" });
-  } else {
-    return res.status(400).json({ error: "Invalid request body" });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
 };
 
