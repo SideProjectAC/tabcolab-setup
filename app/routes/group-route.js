@@ -1,12 +1,11 @@
-const jsonServer = require('json-server');
+const jsonServer = require("json-server");
 const router = jsonServer.create();
-const controller = require('../../controllers/groupController');
+const controller = require("../../controllers/groupController");
 
-
-router.get('/groups', controller.getGroups);
-router.post('/groups', controller.createGroup);
-router.patch('/groups/:group_id', controller.updateGroup);
-router.delete('/groups/:group_id', controller.deleteGroup);
+router.get("/groups", controller.getGroups);
+router.post("/groups", controller.createGroup);
+router.patch("/groups/:group_id", controller.updateGroup);
+router.delete("/groups/:group_id", controller.deleteGroup);
 
 module.exports = router;
 
@@ -46,9 +45,10 @@ module.exports = router;
  *                     item_type: 2
  *                     doneStatus: false
  *       404:
+ *         description: No group in workspace
  *         $ref: '#/components/responses/getGroups404'
  */
- /**
+/**
  * @openapi
  * /groups:
  *   post:
@@ -101,7 +101,7 @@ module.exports = router;
  *         description: Bad Request
  */
 
- /**
+/**
  * @openapi
  * /groups/{group_id}:
  *   patch:
