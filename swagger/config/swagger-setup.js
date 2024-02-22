@@ -22,7 +22,7 @@ function setupSwaggerJsdoc(server) {
       },
       servers: [
         {
-          url: "http://localhost:5050",
+          url: "http://localhost:5050", // json-server address
         },
       ],
       tags: [

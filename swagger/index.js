@@ -5,23 +5,6 @@ const swaggerUi = require("swagger-ui-express");
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Swagger 設定
-// const swaggerOptions = {
-//   definition: {
-//     openapi: "3.0.0",
-//     info: {
-//       title: "Express API",
-//       version: "1.0.0",
-//     },
-//     servers: [
-//       {
-//         url: "http://localhost:5000",
-//       },
-//     ],
-//   },
-//   apis: ["./routes/*.js"], // files containing annotations as above
-// };
-
 const swaggerSetup = require("./config/swagger-setup");
 swaggerSetup.setupSwaggerJsdoc(app);
 
