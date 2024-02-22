@@ -10,6 +10,12 @@ const getGroup = async (group_id) => {
   return group;
 };
 
+const getTab = (group, item_id) => {
+  return group.items.find(
+    (item) => item.item_id === item_id && item.item_type === 0
+  );
+};
+
 const validateTabRequestBody = (body) => {
   const {
     browserTab_favIconURL,
@@ -43,4 +49,5 @@ module.exports = {
   getGroup,
   validateTabRequestBody,
   createNewTab,
+  getTab,
 };

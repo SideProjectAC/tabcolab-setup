@@ -5,6 +5,7 @@ const {
   getGroup,
   validateTabRequestBody,
   createNewTab,
+  getTab,
 } = require("../utils/controller");
 
 const addTab = async (req, res) => {
@@ -56,55 +57,51 @@ const addTab = async (req, res) => {
   }
 };
 
-exports.updateTab = (req, res) => {
-  const { group_id, item_id } = req.params;
-  const group = db.get("groups").find({ id: group_id }).value();
-  if (!group) {
-    return res.status(404).json({ error: "Group not found" });
-  }
-  const tab = group.items.find(
-    (item) => item.item_id === item_id && item.item_type === 0
-  );
-  if (!tab) {
-    return res.status(404).json({ error: "Tab not found in group" });
-  }
+const updateTab = async (req, res) => {
+  try {
+    const { group_id, item_id } = req.params;
+    const group = await getGroup(group_id);
 
-  let { note_content, note_bgColor } = req.body;
-  // 将 note_content 的值转换为字符串，如果是数字则保持原样，如果是其他类型则转换为字符串
-  note_content = String(note_content);
+    const tab = getTab(group, item_id);
+    if (!tab) {
+      return res.status(404).json({ error: "Tab not found in group" });
+    }
 
-  if (
-    group_id &&
-    item_id &&
-    note_content !== undefined &&
-    note_bgColor !== undefined
-  ) {
-    tab.note_content = note_content;
-    tab.note_bgColor = note_bgColor || "#ffffff";
-    /**
-     * @openapi
-     * components:
-     *   requestBodies:
-     *     updateTab:
-     *       type: object
-     *       properties:
-     *         note_content:
-     *           $ref: '#/components/schemas/Item/properties/note_content'
-     *         note_bgColor:
-     *           $ref: '#/components/schemas/Item/properties/note_bgColor'
-     */
-    db.write();
-    res.status(201).json({
-      message: "Note added to tab successfully",
-      note_content: tab.note_content,
-      note_bgColor: tab.note_bgColor,
-    });
-  } else {
-    return res.status(400).json({ error: "Invalid request body" });
+    let { note_content, note_bgColor } = req.body;
+    // 將 note_content 的值轉換為字符串，如果是數字則保持原樣，如果是其他類型則轉換為字符串
+    note_content = String(note_content);
+
+    if (note_content !== undefined && note_bgColor !== undefined) {
+      tab.note_content = note_content;
+      tab.note_bgColor = note_bgColor || "#ffffff";
+      /**
+       * @openapi
+       * components:
+       *   requestBodies:
+       *     updateTab:
+       *       type: object
+       *       properties:
+       *         note_content:
+       *           $ref: '#/components/schemas/Item/properties/note_content'
+       *         note_bgColor:
+       *           $ref: '#/components/schemas/Item/properties/note_bgColor'
+       */
+      await db.write();
+
+      res.status(201).json({
+        message: "Note added to tab successfully",
+        note_content: tab.note_content,
+        note_bgColor: tab.note_bgColor,
+      });
+    } else {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.toString() });
   }
 };
 
-exports.addNote = (req, res) => {
+const addNote = (req, res) => {
   const { group_id } = req.params;
   const group = db.get("groups").find({ id: group_id }).value();
   if (!group) {
