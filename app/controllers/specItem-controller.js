@@ -6,6 +6,7 @@ const {
   validateTabRequestBody,
   createNewTab,
   getTab,
+  createNote,
 } = require("../utils/controller");
 
 const addTab = async (req, res) => {
@@ -101,51 +102,49 @@ const updateTab = async (req, res) => {
   }
 };
 
-const addNote = (req, res) => {
-  const { group_id } = req.params;
-  const group = db.get("groups").find({ id: group_id }).value();
-  if (!group) {
-    return res.status(404).json({ error: "Group not found" });
-  } else if (!group.items) {
-    group.items = [];
-  }
+const addNote = async (req, res) => {
+  try {
+    const { group_id } = req.params;
+    const group = await getGroup(group_id);
 
-  const { note_content, note_bgColor } = req.body;
-  if (group_id && note_content !== undefined && note_bgColor) {
-    const newNote = {
-      item_id: generateItemId(),
-      item_type: 1, // Assuming 1 represents a note
-      note_content,
-      note_bgColor: note_bgColor || "#ffffff",
-    };
-    /**
-     * @openapi
-     * components:
-     *   requestBodies:
-     *     addNote:
-     *       description: Create a note in group.
-     *       type: object
-     *       properties:
-     *         note_content:
-     *           type: string
-     *         note_bgColor:
-     *           type: string
-     *       example:
-     *         note_content: ''
-     *         note_bgColor: '#ffffff'
-     */
-    group.items.push(newNote);
-    db.write();
-    res.status(201).json({
-      message: "Note added to group successfully",
-      item_id: newNote.item_id,
-    });
-  } else {
-    return res.status(400).json({ error: "Invalid request body" });
+    if (!group.items) {
+      group.items = [];
+    }
+
+    const { note_content, note_bgColor } = req.body;
+    if (group_id && note_content !== undefined && note_bgColor) {
+      const newNote = createNote(note_content, note_bgColor);
+      /**
+       * @openapi
+       * components:
+       *   requestBodies:
+       *     addNote:
+       *       description: Create a note in group.
+       *       type: object
+       *       properties:
+       *         note_content:
+       *           type: string
+       *         note_bgColor:
+       *           type: string
+       *       example:
+       *         note_content: ''
+       *         note_bgColor: '#ffffff'
+       */
+      group.items.push(newNote);
+      await db.write();
+      res.status(201).json({
+        message: "Note added to group successfully",
+        item_id: newNote.item_id,
+      });
+    } else {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.toString() });
   }
 };
 
-exports.updateNote = (req, res) => {
+const updateNote = (req, res) => {
   const { group_id, item_id } = req.params;
   const groups = db.get("groups").value();
   const group = groups.find((group) => group.id === group_id);

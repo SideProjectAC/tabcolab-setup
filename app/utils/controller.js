@@ -45,9 +45,19 @@ const createNewTab = (body) => {
   };
 };
 
+const createNote = (note_content, note_bgColor) => {
+  return {
+    item_id: generateItemId(),
+    item_type: 1, // Assuming 1 represents a note
+    note_content,
+    note_bgColor: note_bgColor || "#ffffff",
+  };
+};
+
 module.exports = {
   getGroup,
   validateTabRequestBody,
   createNewTab,
   getTab,
+  createNote,
 };
